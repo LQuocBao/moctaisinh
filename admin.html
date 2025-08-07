@@ -129,103 +129,6 @@
       max-width: 250px;
     }
 
-    /* Blog table specific styles */
-    #blogsTable td:nth-child(3) {
-      white-space: normal;
-      word-break: break-word;
-      max-width: 350px;
-    }
-
-    #blogsTable td:nth-child(2) {
-      max-width: 250px;
-    }
-
-    #blogsTable td:nth-child(4) {
-      max-width: 120px;
-    }
-
-    #blogsTable td:nth-child(5) {
-      max-width: 100px;
-    }
-
-    /* Make admin content wider for better table display */
-    .admin-content {
-      padding: 40px 32px;
-      margin-left: 220px;
-      transition: margin-left 0.4s cubic-bezier(.4, 2, .6, 1);
-      min-height: 100vh;
-      background: var(--main-white);
-      max-width: none;
-    }
-
-    /* Make order modal wider */
-    #orderModal .modal-dialog {
-      max-width: 900px;
-      width: 90%;
-    }
-
-    /* Order status select styling */
-    .order-status-select {
-      width: auto;
-      min-width: 110px;
-      max-width: 130px;
-      border-radius: 6px;
-      border: 2px solid;
-      font-size: 0.85rem;
-      font-weight: 500;
-      padding: 4px 8px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .order-status-select:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-    }
-
-    .order-status-select:focus {
-      outline: none;
-      box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
-    }
-
-    .order-status-select option {
-      background-color: #fff;
-      color: #333;
-      padding: 8px 12px;
-      font-size: 0.85rem;
-    }
-
-    .order-status-select.status-pending {
-      background-color: #fff3cd;
-      color: #856404;
-      border-color: #ffeaa7;
-    }
-
-    .order-status-select.status-confirmed {
-      background-color: #d1ecf1;
-      color: #0c5460;
-      border-color: #bee5eb;
-    }
-
-    .order-status-select.status-shipping {
-      background-color: #cce5ff;
-      color: #004085;
-      border-color: #b3d7ff;
-    }
-
-    .order-status-select.status-delivered {
-      background-color: #d4edda;
-      color: #155724;
-      border-color: #c3e6cb;
-    }
-
-    .order-status-select.status-cancelled {
-      background-color: #f8d7da;
-      color: #721c24;
-      border-color: #f5c6cb;
-    }
-
     .admin-table td img {
       max-width: 60px;
       max-height: 60px;
@@ -894,6 +797,7 @@
       justify-content: center;
       box-shadow: 0 2px 6px rgba(220, 53, 69, 0.3);
       transition: all 0.2s ease;
+      z-index: 10;
     }
 
     .image-remove-btn:hover {
@@ -1131,16 +1035,16 @@
         <h2>Admin Panel</h2>
         <ul>
           <li><a href="#products" class="active" data-tab="products">Quản lý sản phẩm</a></li>
-          <li><a href="#blogs" data-tab="blogs">Quản lý blog</a></li>
           <li><a href="#orders" data-tab="orders">Quản lý đơn hàng</a></li>
+          <li><a href="#blogs" data-tab="blogs">Quản lý blog</a></li>
         </ul>
       </nav>
       <div class="col-lg-10 admin-content">
         <div class="admin-nav-mobile mb-3">
           <select class="form-select" id="adminTabMobile">
             <option value="products">Quản lý sản phẩm</option>
-            <option value="blogs">Quản lý blog</option>
             <option value="orders">Quản lý đơn hàng</option>
+            <option value="blogs">Quản lý blog</option>
           </select>
         </div>
         <div id="tab-products" class="admin-tab">
@@ -1180,19 +1084,53 @@
             <ul class="pagination" id="pagination" style="justify-content:center;"></ul>
           </nav>
         </div>
+        <div id="tab-orders" class="admin-tab d-none">
+          <div class="admin-section-title d-flex align-items-center justify-content-between">
+            <span>Quản lý đơn hàng</span>
+          </div>
+          <div class="sticky-toolbar d-flex align-items-center justify-content-between mb-3">
+            <button class="admin-btn btn-sm" id="btnRefreshOrders">
+              <i class="fas fa-redo"></i> Làm mới
+            </button>
+            <button class="admin-btn btn-sm" id="orderCountBtn">Tổng: 0 đơn hàng</button>
+          </div>
+          <div class="mb-3 d-flex align-items-center" style="gap:12px;">
+            <input type="text" class="form-control" id="searchOrderInput" placeholder="Tìm kiếm theo mã đơn hàng, tên khách hàng, SĐT..."
+              style="max-width:320px;">
+          </div>
+          <div class="admin-table-wrapper">
+            <table class="table admin-table" id="ordersTable">
+              <thead>
+                <tr>
+                  <th style="cursor:pointer;" onclick="sortOrderTable('id')">Mã đơn hàng <span id="sortOrderIcon-id"></span></th>
+                  <th style="cursor:pointer;" onclick="sortOrderTable('date')">Ngày đặt <span id="sortOrderIcon-date"></span></th>
+                  <th style="cursor:pointer;" onclick="sortOrderTable('customerName')">Khách hàng <span id="sortOrderIcon-customerName"></span></th>
+                  <th style="cursor:pointer;" onclick="sortOrderTable('customerPhone')">Số điện thoại <span id="sortOrderIcon-customerPhone"></span></th>
+                  <th style="cursor:pointer;" onclick="sortOrderTable('customerAddress')">Địa chỉ <span id="sortOrderIcon-customerAddress"></span></th>
+                  <th style="cursor:pointer;" onclick="sortOrderTable('total')">Tổng tiền <span id="sortOrderIcon-total"></span></th>
+                  <th style="cursor:pointer;" onclick="sortOrderTable('status')">Trạng thái <span id="sortOrderIcon-status"></span></th>
+                  <th>Thao tác</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Đơn hàng sẽ được render ở đây bằng JS -->
+              </tbody>
+            </table>
+          </div>
+          <nav>
+            <ul class="pagination" id="orderPagination" style="justify-content:center;"></ul>
+          </nav>
+        </div>
         <div id="tab-blogs" class="admin-tab d-none">
           <div class="admin-section-title d-flex align-items-center justify-content-between">
             <span>Quản lý blog</span>
-            <span id="blogCount" style="font-size:1rem;font-weight:400;color:#3b5d50;"></span>
+            <button class="admin-btn btn-sm" id="blogCountBtn" style="pointer-events:auto;">Tổng: 0 bài viết</button>
           </div>
           <div class="sticky-toolbar d-flex align-items-center justify-content-between mb-3">
-            <button class="admin-btn btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#blogModal"
-              id="btnAddBlog">+ Thêm bài viết</button>
-            <button class="admin-btn btn btn-success mb-3" id="blogCountBtn">Tổng: 0 bài viết</button>
-          </div>
-          <div class="mb-3 d-flex align-items-center" style="gap:12px;">
-            <input type="text" class="form-control" id="searchBlogInput"
-              placeholder="Tìm kiếm tiêu đề, nội dung, tác giả..." style="max-width:320px;">
+            <button class="admin-btn btn-sm" data-bs-toggle="modal" data-bs-target="#blogModal" id="btnAddBlog">+ Thêm
+              bài viết</button>
+            <input type="text" class="form-control" id="searchBlogInput" placeholder="Tìm kiếm tiêu đề, mô tả..."
+              style="max-width:320px;">
           </div>
           <div class="admin-table-wrapper">
             <table class="table admin-table" id="blogsTable">
@@ -1216,44 +1154,6 @@
           </div>
           <nav>
             <ul class="pagination" id="blogPagination" style="justify-content:center;"></ul>
-          </nav>
-        </div>
-        <div id="tab-orders" class="admin-tab d-none">
-          <div class="admin-section-title d-flex align-items-center justify-content-between">
-            <span>Quản lý đơn hàng</span>
-            <button class="admin-btn btn-sm" id="orderCountBtn" style="pointer-events:auto;">Tổng: 0 đơn hàng</button>
-          </div>
-          <div class="sticky-toolbar d-flex align-items-center justify-content-between mb-3">
-            <button class="admin-btn btn-sm" data-bs-toggle="modal" data-bs-target="#orderModal" id="btnAddOrder">+ Thêm
-              đơn hàng</button>
-            <input type="text" class="form-control" id="searchOrderInput"
-              placeholder="Tìm kiếm theo mã đơn hàng, tên khách hàng..." style="max-width:320px;">
-          </div>
-          <div class="admin-table-wrapper">
-            <table class="table admin-table" id="ordersTable">
-              <thead>
-                <tr>
-                  <th style="cursor:pointer;" onclick="sortOrderTable('id')">Mã đơn hàng <span
-                      id="sortOrderIcon-id"></span></th>
-                  <th style="cursor:pointer;" onclick="sortOrderTable('date')">Ngày đặt <span
-                      id="sortOrderIcon-date"></span></th>
-                  <th style="cursor:pointer;" onclick="sortOrderTable('customerName')">Khách hàng <span
-                      id="sortOrderIcon-customerName"></span></th>
-                  <th style="cursor:pointer;" onclick="sortOrderTable('customerPhone')">Số điện thoại <span
-                      id="sortOrderIcon-customerPhone"></span></th>
-                  <th style="cursor:pointer;" onclick="sortOrderTable('total')">Tổng tiền <span
-                      id="sortOrderIcon-total"></span></th>
-                  <th style="cursor:pointer;" onclick="sortOrderTable('status')">Trạng thái <span
-                      id="sortOrderIcon-status"></span></th>
-                  <th>Chi tiết</th>
-                  <th>Thao tác</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-          <nav>
-            <ul class="pagination" id="orderPagination" style="justify-content:center;"></ul>
           </nav>
         </div>
       </div>
@@ -1376,7 +1276,7 @@
   <div class="modal fade" id="blogModal" tabindex="-1" aria-labelledby="blogModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
-        <div class="modal-header">
+        <div class="modal-header" style="background:var(--main-blue);color:#fff;">
           <h5 class="modal-title" id="blogModalLabel">Thêm/Sửa bài viết</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
@@ -1387,41 +1287,45 @@
               <label class="form-label">ID</label>
               <input type="text" class="form-control" id="blogId" readonly>
             </div>
-            <div class="row">
-              <div class="col-md-6">
+            <div class="product-form-row">
+              <div class="product-form-col">
                 <div class="mb-3">
                   <label class="form-label">Tiêu đề *</label>
-                  <input type="text" class="form-control" id="blogTitle" required>
+                  <input type="text" class="form-control" id="blogTitle" required placeholder="Nhập tiêu đề bài viết...">
                 </div>
                 <div class="mb-3">
                   <label class="form-label">Tác giả *</label>
-                  <input type="text" class="form-control" id="blogAuthor" required>
+                  <input type="text" class="form-control" id="blogAuthor" required placeholder="Tên tác giả...">
                 </div>
                 <div class="mb-3">
-                  <label class="form-label">Ngày *</label>
-                  <input type="date" class="form-control" id="blogDate" required>
+                  <label class="form-label">Ngày đăng</label>
+                  <input type="text" class="form-control" id="blogDate" readonly>
                 </div>
                 <div class="mb-3">
-                  <label class="form-label">URL Ảnh</label>
+                  <label class="form-label">Ảnh đại diện * (URL)</label>
                   <div class="mb-2">
                     <a href="https://imgbb.com/" target="_blank"
                       style="color: #007bff; text-decoration: underline; font-size: 0.9rem;">
                       📷 Bấm vào đây để lấy URL ảnh
                     </a>
                   </div>
-                  <input type="url" class="form-control" id="blogImage" placeholder="https://example.com/image.jpg">
-                  <!-- Blog Image Preview -->
-                  <div class="blog-image-preview mt-2" id="blogImagePreview" style="display:none;">
-                    <img src="" alt="Blog preview"
-                      style="max-width:200px;max-height:150px;border-radius:4px;border:1px solid #ddd;cursor:pointer;"
-                      onclick="showBlogImageModal(this.src)">
+                  <input type="url" class="form-control" id="blogImage" required placeholder="https://...jpg">
+                  <!-- Image Gallery Preview -->
+                  <div class="image-gallery-container">
+                    <div class="image-gallery-preview" id="blogImageGalleryPreview">
+                      <div class="image-gallery-empty">
+                        <i class="fas fa-image"></i>
+                        <div>Chưa có ảnh nào</div>
+                        <small>Nhập URL ảnh vào ô bên trên để xem preview (tối đa 1 ảnh)</small>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div class="col-md-6">
-                <div class="mb-3">
-                  <label class="form-label">Nội dung *</label>
-                  <textarea class="form-control" id="blogContent" rows="12" required
+              <div class="product-form-col product-form-col-right">
+                <div class="mb-3" style="width:100%;flex:1;">
+                  <label class="form-label" for="blogContent">Nội dung bài viết *</label>
+                  <textarea class="form-control" id="blogContent" rows="25" required
                     placeholder="Nhập nội dung bài viết..."></textarea>
                 </div>
               </div>
@@ -1451,145 +1355,143 @@
       </div>
     </div>
   </div>
-  <!-- Modal đơn hàng -->
-  <div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+  
+  <!-- Modal chi tiết đơn hàng -->
+  <div class="modal fade" id="orderDetailModal" tabindex="-1" aria-labelledby="orderDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
       <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="orderModalLabel">Thêm/Sửa đơn hàng</h5>
+        <div class="modal-header" style="background:var(--main-blue);color:#fff;">
+          <h5 class="modal-title" id="orderDetailModalLabel">Chi tiết đơn hàng</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form id="orderForm">
-            <input type="hidden" id="orderRowIndex">
-            <div class="mb-3" id="orderIdGroup" style="display:none;">
-              <label class="form-label">Mã đơn hàng</label>
-              <input type="text" class="form-control" id="orderId" readonly>
+          <div class="row">
+            <div class="col-md-6">
+              <h6 class="fw-bold text-primary mb-3">Thông tin đơn hàng</h6>
+              <table class="table table-borderless">
+                <tr>
+                  <td class="fw-bold">Mã đơn hàng:</td>
+                  <td id="orderDetailId"></td>
+                </tr>
+                <tr>
+                  <td class="fw-bold">Ngày đặt:</td>
+                  <td id="orderDetailDate"></td>
+                </tr>
+                <tr>
+                  <td class="fw-bold">Trạng thái:</td>
+                  <td><span id="orderDetailStatus" class="badge"></span></td>
+                </tr>
+                <tr>
+                  <td class="fw-bold">Tổng tiền:</td>
+                  <td id="orderDetailTotal" class="fw-bold text-success"></td>
+                </tr>
+              </table>
             </div>
-            <div class="row">
-              <div class="col-md-6">
-                <div class="mb-3">
-                  <label class="form-label">Tên khách hàng *</label>
-                  <input type="text" class="form-control" id="orderCustomerName" required>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Số điện thoại *</label>
-                  <input type="tel" class="form-control" id="orderCustomerPhone" required>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Email</label>
-                  <input type="email" class="form-control" id="orderCustomerEmail">
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Địa chỉ *</label>
-                  <textarea class="form-control" id="orderCustomerAddress" rows="2" required></textarea>
-                </div>
+            <div class="col-md-6">
+              <h6 class="fw-bold text-primary mb-3">Thông tin khách hàng</h6>
+              <table class="table table-borderless">
+                <tr>
+                  <td class="fw-bold">Họ tên:</td>
+                  <td id="orderDetailName"></td>
+                </tr>
+                <tr>
+                  <td class="fw-bold">Số điện thoại:</td>
+                  <td id="orderDetailPhone"></td>
+                </tr>
+                <tr>
+                  <td class="fw-bold">Email:</td>
+                  <td id="orderDetailEmail"></td>
+                </tr>
+              </table>
+            </div>
+          </div>
+          
+          <div class="row mt-3">
+            <div class="col-12">
+              <h6 class="fw-bold text-primary mb-3">Địa chỉ giao hàng</h6>
+              <table class="table table-borderless">
+                <tr>
+                  <td class="fw-bold">Địa chỉ:</td>
+                  <td id="orderDetailAddress"></td>
+                </tr>
+                <tr>
+                  <td class="fw-bold">Tỉnh/Thành:</td>
+                  <td id="orderDetailProvince"></td>
+                </tr>
+                <tr>
+                  <td class="fw-bold">Quận/Huyện:</td>
+                  <td id="orderDetailDistrict"></td>
+                </tr>
+                <tr>
+                  <td class="fw-bold">Phường/Xã:</td>
+                  <td id="orderDetailWard"></td>
+                </tr>
+              </table>
+            </div>
+          </div>
+          
+          <div class="row mt-3">
+            <div class="col-12">
+              <h6 class="fw-bold text-primary mb-3">Sản phẩm đã đặt</h6>
+              <div class="bg-light p-3 rounded">
+                <p id="orderDetailItems" class="mb-0"></p>
               </div>
-              <div class="col-md-6">
-                <div class="mb-3">
-                  <label class="form-label">Tỉnh/Thành phố *</label>
-                  <input type="text" class="form-control" id="orderCustomerProvince" required>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Quận/Huyện *</label>
-                  <input type="text" class="form-control" id="orderCustomerDistrict" required>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Phường/Xã *</label>
-                  <input type="text" class="form-control" id="orderCustomerWard" required>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Tổng tiền *</label>
-                  <input type="text" class="form-control" id="orderTotal" required placeholder="000.000₫">
-                </div>
+            </div>
+          </div>
+          
+          <div class="row mt-3">
+            <div class="col-12">
+              <h6 class="fw-bold text-primary mb-3">Ghi chú</h6>
+              <div class="bg-light p-3 rounded">
+                <p id="orderDetailNote" class="mb-0"></p>
               </div>
             </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="admin-btn btn-cancel btn-sm" data-bs-dismiss="modal">Đóng</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal cập nhật trạng thái đơn hàng -->
+  <div class="modal fade" id="orderStatusModal" tabindex="-1" aria-labelledby="orderStatusModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header" style="background:var(--main-blue);color:#fff;">
+          <h5 class="modal-title" id="orderStatusModalLabel">Cập nhật trạng thái đơn hàng</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="orderStatusForm">
             <div class="mb-3">
-              <label class="form-label">Sản phẩm *</label>
-              <textarea class="form-control" id="orderItems" rows="3" required
-                placeholder="Ví dụ: Bàn gỗ sồi (x1), Ghế tre (x2)"></textarea>
+              <label class="form-label fw-bold">Mã đơn hàng:</label>
+              <p id="orderStatusId" class="form-control-plaintext"></p>
             </div>
             <div class="mb-3">
-              <label class="form-label">Ghi chú</label>
-              <textarea class="form-control" id="orderNote" rows="2"></textarea>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Trạng thái *</label>
-              <select class="form-control" id="orderStatus" required>
+              <label for="orderStatusSelect" class="form-label fw-bold">Trạng thái mới:</label>
+              <select class="form-select" id="orderStatusSelect" required>
                 <option value="Chờ xử lý">Chờ xử lý</option>
-                <option value="Đã xác nhận">Đã xác nhận</option>
-                <option value="Đang giao hàng">Đang giao hàng</option>
-                <option value="Đã giao hàng">Đã giao hàng</option>
+                <option value="Đang xử lý">Đang xử lý</option>
+                <option value="Đã xử lý">Đã xử lý</option>
                 <option value="Đã hủy">Đã hủy</option>
               </select>
             </div>
-            <button class="admin-btn btn-sm admin-form-btn-full" type="submit">Lưu</button>
+            <button type="submit" class="admin-btn btn-sm admin-form-btn-full">Cập nhật</button>
           </form>
         </div>
       </div>
     </div>
   </div>
-  <!-- Modal xác nhận xoá đơn hàng -->
-  <div class="modal fade" id="deleteOrderConfirmModal" tabindex="-1" aria-labelledby="deleteOrderConfirmLabel"
-    aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header" style="background:var(--main-blue);color:#fff;">
-          <h5 class="modal-title" id="deleteOrderConfirmLabel">Xác nhận xoá đơn hàng</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          Bạn có chắc chắn muốn xoá đơn hàng này không?
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="admin-btn btn-cancel btn-sm" data-bs-dismiss="modal">Huỷ</button>
-          <button type="button" class="admin-btn btn-danger btn-sm" id="btnConfirmDeleteOrder">Xoá</button>
-        </div>
-      </div>
-    </div>
-  </div>
+  
   <script src="js/bootstrap.bundle.min.js"></script>
+  <script src="js/admin-manager.js"></script>
   <script>
     const API_BASE = 'http://localhost:8080';
     function formatVND(number) {
       if (!number) return '';
       return Number(number).toLocaleString('vi-VN') + '₫';
-    }
-
-    function formatOrderItems(items) {
-      if (!items) return 'Không có sản phẩm';
-
-      try {
-        // Nếu items là string JSON, parse nó
-        if (typeof items === 'string') {
-          if (items.startsWith('[') || items.startsWith('{')) {
-            const parsed = JSON.parse(items);
-            if (Array.isArray(parsed)) {
-              return parsed.map(item =>
-                `${item.productName || 'Sản phẩm'} (x${item.quantity || 1}) - ${formatVND(item.price || 0)}`
-              ).join('<br>');
-            }
-          }
-          // Nếu là string thường, hiển thị trực tiếp
-          return items;
-        }
-
-        // Nếu items là array
-        if (Array.isArray(items)) {
-          return items.map(item =>
-            `${item.productName || 'Sản phẩm'} (x${item.quantity || 1}) - ${formatVND(item.price || 0)}`
-          ).join('<br>');
-        }
-
-        // Nếu items là object
-        if (typeof items === 'object') {
-          return `${items.productName || 'Sản phẩm'} (x${items.quantity || 1}) - ${formatVND(items.price || 0)}`;
-        }
-
-        return items.toString();
-      } catch (e) {
-        return items.toString();
-      }
     }
     function showToast(message, type = 'success') {
       let icon = '';
@@ -2014,20 +1916,8 @@
       setTimeout(() => {
         modal.style.display = 'none';
       }, 300);
-
-      // Kiểm tra và mở lại modal phù hợp
       const productModalEl = document.getElementById('productModal');
-      const blogModalEl = document.getElementById('blogModal');
-      const productImageTextarea = document.getElementById('productImage');
-      const blogImageInput = document.getElementById('blogImage');
-
-      // Ưu tiên mở lại blog modal nếu có dữ liệu
-      if (blogModalEl && blogImageInput && blogImageInput.value) {
-        var blogModal = new bootstrap.Modal(blogModalEl);
-        blogModal.show();
-      }
-      // Nếu không có blog modal, mở lại product modal nếu có dữ liệu
-      else if (productModalEl && productImageTextarea && productImageTextarea.value) {
+      if (productModalEl) {
         var productModal = new bootstrap.Modal(productModalEl);
         productModal.show();
       }
@@ -2086,28 +1976,15 @@
       }, 300);
     }
     window.showImageModal = function (url, index = 0) {
-      // Kiểm tra xem có phải từ product form không
       const textarea = document.getElementById('productImage');
-      let allImageUrls = [];
-      let currentImageIndex = 0;
-
-      if (textarea && textarea.value) {
-        // Từ product form
-        allImageUrls = textarea.value.split(/\n/).map(s => s.trim()).filter(Boolean);
-        currentImageIndex = index;
-        if (allImageUrls.length === 0) return;
-      } else {
-        // Từ blog hoặc nơi khác - chỉ hiển thị 1 ảnh
-        allImageUrls = [url];
-        currentImageIndex = 0;
-      }
-
+      allImageUrls = textarea.value.split(/\n/).map(s => s.trim()).filter(Boolean);
+      currentImageIndex = index;
+      if (allImageUrls.length === 0) return;
       const modalImg = document.getElementById('modalImage');
       const modalThumbnails = document.getElementById('modalThumbnails');
       modalImg.src = url;
       currentZoom = 1;
       modalImg.style.transform = 'scale(1)';
-
       if (allImageUrls.length > 1) {
         modalThumbnails.innerHTML = allImageUrls.map((imgUrl, idx) => `
           <img src="${imgUrl}" alt="Thumbnail ${idx + 1}" 
@@ -2118,20 +1995,19 @@
       } else {
         modalThumbnails.style.display = 'none';
       }
-
       const modal = document.getElementById('imageModal');
       modal.style.display = 'block';
       modal.style.opacity = '0';
       setTimeout(() => {
         modal.style.opacity = '1';
       }, 10);
-
-      // Chỉ ẩn product modal nếu nó đang mở
       const productModalEl = document.getElementById('productModal');
       if (productModalEl && productModalEl.classList.contains('show')) {
         bootstrap.Modal.getInstance(productModalEl).hide();
       }
     }
+
+
     document.getElementById('imageModal').addEventListener('click', function (e) {
       if (e.target === this || e.target.classList.contains('modal-image-content')) {
         closeImageModal();
@@ -2145,6 +2021,8 @@
     document.getElementById('productCountBtn').onclick = function () {
       document.getElementById('productsTable').scrollIntoView({ behavior: 'smooth' });
     };
+
+
     let blogs = [];
     let blogCurrentPage = 1;
     const blogPageSize = 10;
@@ -2162,7 +2040,6 @@
       showGlobalLoading(false);
     }
     function renderBlogCount() {
-      document.getElementById('blogCount').innerText = `${blogs.length} bài viết`;
       document.getElementById('blogCountBtn').innerText = `Tổng: ${blogs.length} bài viết`;
     }
     function renderBlogs() {
@@ -2183,17 +2060,14 @@
       data = data.slice(start, end);
       data.forEach((b, idx) => {
         const tr = document.createElement('tr');
-        // Truncate content for better display
-        const truncatedContent = b.content.length > 100 ? b.content.substring(0, 100) + '...' : b.content;
-        const truncatedTitle = b.title.length > 50 ? b.title.substring(0, 50) + '...' : b.title;
-
+        const displayContent = (b.content || '').length > 100 ? (b.content || '').substring(0, 100) + '...' : (b.content || '');
         tr.innerHTML = `
           <td>${b.id}</td>
-          <td title="${b.title}">${truncatedTitle}</td>
-          <td title="${b.content}">${truncatedContent}</td>
+          <td>${b.title}</td>
+          <td>${displayContent}</td>
           <td>${b.author}</td>
           <td>${b.date || ''}</td>
-          <td>${b.image ? `<img src="${b.image}" alt="${b.title}" style="max-width:60px;max-height:60px;cursor:pointer;object-fit:cover;border-radius:4px;" onclick="showImageModal('${b.image}')">` : '<span class="text-muted">Không có ảnh</span>'}</td>
+          <td>${b.image ? `<img src="${b.image}" alt="${b.title}" style="width:50px;height:50px;object-fit:cover;border-radius:4px;">` : '<span class="text-muted">Không có ảnh</span>'}</td>
           <td>
             <button class="admin-btn btn-sm" onclick="editBlog(${idx})">Sửa</button>
             <button class="admin-btn btn-danger btn-sm" onclick="deleteBlog(${idx})">Xoá</button>
@@ -2234,29 +2108,60 @@
       const q = this.value.trim().toLowerCase();
       blogs = allBlogs.filter(b =>
         b.title.toLowerCase().includes(q) ||
-        b.content.toLowerCase().includes(q) ||
-        b.author.toLowerCase().includes(q)
+        (b.content || '').toLowerCase().includes(q) ||
+        (b.author || '').toLowerCase().includes(q)
       );
       blogCurrentPage = 1;
       renderBlogs();
       renderBlogPagination();
       renderBlogCount();
     });
+    // Blog image preview
+    document.getElementById('blogImage').addEventListener('input', function() {
+      const imageUrl = this.value.trim();
+      const preview = document.getElementById('blogImageGalleryPreview');
+      
+      if (imageUrl) {
+        preview.innerHTML = `
+          <div class="image-preview-item">
+            <img src="${imageUrl}" alt="Blog Image" onerror="this.style.display='none'">
+            <button type="button" class="image-remove-btn" onclick="clearBlogImage()" title="Xóa ảnh">
+              ×
+            </button>
+          </div>
+        `;
+      } else {
+        preview.innerHTML = `
+          <div class="image-gallery-empty">
+            <i class="fas fa-image"></i>
+            <div>Chưa có ảnh nào</div>
+            <small>Nhập URL ảnh vào ô bên trên để xem preview (tối đa 1 ảnh)</small>
+          </div>
+        `;
+      }
+    });
+
     document.getElementById('btnAddBlog').onclick = function () {
       document.getElementById('blogForm').reset();
       document.getElementById('blogRowIndex').value = '';
       document.getElementById('blogId').value = '';
+
       // Ẩn field ID khi thêm mới
       document.getElementById('blogIdGroup').style.display = 'none';
       document.getElementById('blogModalLabel').innerText = 'Thêm bài viết';
+      // Ẩn preview ảnh
+      document.getElementById('blogImageGalleryPreview').innerHTML = `
+        <div class="image-gallery-empty">
+          <i class="fas fa-image"></i>
+          <div>Chưa có ảnh nào</div>
+          <small>Nhập URL ảnh vào ô bên trên để xem preview (tối đa 1 ảnh)</small>
+        </div>
+      `;
       const today = new Date();
       const yyyy = today.getFullYear();
       const mm = String(today.getMonth() + 1).padStart(2, '0');
       const dd = String(today.getDate()).padStart(2, '0');
       document.getElementById('blogDate').value = `${yyyy}-${mm}-${dd}`;
-
-      // Ẩn preview ảnh khi thêm mới
-      document.getElementById('blogImagePreview').style.display = 'none';
     };
     window.editBlog = function (idx) {
       const b = blogs[idx];
@@ -2267,23 +2172,32 @@
       document.getElementById('blogDate').value = b.date || '';
       document.getElementById('blogImage').value = b.image || '';
 
-      // Hiển thị preview ảnh nếu có
-      const imageUrl = b.image || '';
-      const preview = document.getElementById('blogImagePreview');
-      const previewImg = preview.querySelector('img');
-      if (imageUrl && imageUrl.startsWith('http')) {
-        previewImg.src = imageUrl;
-        preview.style.display = 'block';
-      } else {
-        preview.style.display = 'none';
-      }
-
       // Hiển thị field ID khi edit
       document.getElementById('blogIdGroup').style.display = 'block';
       // Tìm index thực tế trong allBlogs
       const realIndex = allBlogs.findIndex(x => x.id === b.id);
       document.getElementById('blogRowIndex').value = realIndex + 2;
       document.getElementById('blogModalLabel').innerText = 'Sửa bài viết';
+      // Hiển thị preview ảnh nếu có
+      const preview = document.getElementById('blogImageGalleryPreview');
+      if (b.image) {
+        preview.innerHTML = `
+          <div class="image-preview-item">
+            <img src="${b.image}" alt="Blog Image" onerror="this.style.display='none'">
+            <button type="button" class="image-remove-btn" onclick="clearBlogImage()" title="Xóa ảnh">
+              ×
+            </button>
+          </div>
+        `;
+      } else {
+        preview.innerHTML = `
+          <div class="image-gallery-empty">
+            <i class="fas fa-image"></i>
+            <div>Chưa có ảnh nào</div>
+            <small>Nhập URL ảnh vào ô bên trên để xem preview (tối đa 1 ảnh)</small>
+          </div>
+        `;
+      }
       var modal = new bootstrap.Modal(document.getElementById('blogModal'));
       modal.show();
     };
@@ -2293,6 +2207,18 @@
       var modal = new bootstrap.Modal(document.getElementById('deleteBlogConfirmModal'));
       modal.show();
     };
+    // Hàm xóa ảnh blog
+    window.clearBlogImage = function() {
+      document.getElementById('blogImage').value = '';
+      document.getElementById('blogImageGalleryPreview').innerHTML = `
+        <div class="image-gallery-empty">
+          <i class="fas fa-image"></i>
+          <div>Chưa có ảnh nào</div>
+          <small>Nhập URL ảnh vào ô bên trên để xem preview (tối đa 1 ảnh)</small>
+        </div>
+      `;
+    };
+
     document.getElementById('btnConfirmDeleteBlog').onclick = async function () {
       if (blogDeleteIdx !== null) {
         const b = blogs[blogDeleteIdx];
@@ -2317,7 +2243,7 @@
       const title = document.getElementById('blogTitle').value.trim();
       const content = document.getElementById('blogContent').value.trim();
       const author = document.getElementById('blogAuthor').value.trim();
-      const date = document.getElementById('blogDate').value.trim();
+      const image = document.getElementById('blogImage').value.trim();
       if (!title) {
         showToast('Tiêu đề không được để trống!', 'warning');
         return false;
@@ -2330,8 +2256,8 @@
         showToast('Tác giả không được để trống!', 'warning');
         return false;
       }
-      if (!date) {
-        showToast('Ngày không được để trống!', 'warning');
+      if (!image) {
+        showToast('Ảnh đại diện không được để trống!', 'warning');
         return false;
       }
       return true;
@@ -2349,7 +2275,8 @@
         content: document.getElementById('blogContent').value,
         author: document.getElementById('blogAuthor').value,
         date: document.getElementById('blogDate').value,
-        image: document.getElementById('blogImage').value
+        image: document.getElementById('blogImage').value,
+
       };
       try {
         if (rowIndex) {
@@ -2378,11 +2305,11 @@
       showGlobalLoading(false);
     };
     document.querySelector('a[data-tab="blogs"]').addEventListener('click', fetchBlogs);
-
-    // Quản lý đơn hàng
+    
+    // Quản lý đơn hàng - Đồng bộ với quản lý sản phẩm
     const ordersTableBody = document.querySelector('#ordersTable tbody');
     let orders = [];
-    let allOrders = [];
+    let filteredOrders = [];
     let orderCurrentPage = 1;
     const orderPageSize = 10;
     let orderCurrentSort = { key: '', asc: true };
@@ -2391,90 +2318,43 @@
       document.getElementById('orderCountBtn').innerText = `Tổng: ${orders.length} đơn hàng`;
     }
 
-    async function fetchOrders() {
-      showGlobalLoading(true);
-      try {
-        const response = await fetch(`${API_BASE}/api/orders`);
-        allOrders = await response.json();
-        orders = [...allOrders];
-        orderCurrentPage = 1;
-        renderOrders();
-        renderOrderPagination();
-        renderOrderCount();
-      } catch (e) {
-        showToast('Không thể tải danh sách đơn hàng!', 'danger');
-      }
-      showGlobalLoading(false);
-    }
-
-    function renderOrders() {
-      const tbody = ordersTableBody;
-      tbody.innerHTML = '';
-      const start = (orderCurrentPage - 1) * orderPageSize;
-      const end = start + orderPageSize;
-      const data = orders.slice(start, end);
-
-      data.forEach((o, idx) => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${o.id}</td>
-          <td>${o.date}</td>
-          <td>${o.customerName}</td>
-          <td>${o.customerPhone}</td>
-          <td>${formatVND(o.total)}</td>
-                      <td>
-              <select class="form-control form-control-sm order-status-select ${getStatusClass(o.status)}" onchange="updateOrderStatus('${o.id}', this.value)">
-                <option value="Chờ xử lý" ${o.status === 'Chờ xử lý' ? 'selected' : ''}>Chờ xử lý</option>
-                <option value="Đã xác nhận" ${o.status === 'Đã xác nhận' ? 'selected' : ''}>Đã xác nhận</option>
-                <option value="Đang giao hàng" ${o.status === 'Đang giao hàng' ? 'selected' : ''}>Đang giao hàng</option>
-                <option value="Đã giao hàng" ${o.status === 'Đã giao hàng' ? 'selected' : ''}>Đã giao hàng</option>
-                <option value="Đã hủy" ${o.status === 'Đã hủy' ? 'selected' : ''}>Đã hủy</option>
-              </select>
-            </td>
-          <td>
-            <button class="admin-btn btn-sm" onclick="viewOrderDetail(${idx})">Xem</button>
-          </td>
-          <td>
-            <button class="admin-btn btn-sm" onclick="editOrder(${idx})">Sửa</button>
-            <button class="admin-btn btn-danger btn-sm" onclick="deleteOrder(${idx})">Xoá</button>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
+    document.getElementById('searchOrderInput').addEventListener('input', function () {
+      const q = this.value.trim().toLowerCase();
+      filteredOrders = orders.filter(o =>
+        (o.id || '').toLowerCase().includes(q) ||
+        (o.customerName || '').toLowerCase().includes(q) ||
+        (o.customerPhone || '').toLowerCase().includes(q) ||
+        (o.customerAddress || '').toLowerCase().includes(q)
+      );
+      orderCurrentPage = 1;
+      renderOrders();
+      renderOrderPagination();
       renderOrderCount();
+    });
+
+    window.sortOrderTable = function (key) {
+      if (orderCurrentSort.key === key) orderCurrentSort.asc = !orderCurrentSort.asc;
+      else { orderCurrentSort.key = key; orderCurrentSort.asc = true; }
+      filteredOrders.sort((a, b) => {
+        let va = a[key], vb = b[key];
+        if (key === 'total') { va = Number(va) || 0; vb = Number(vb) || 0; }
+        if (key === 'date') { va = va || ''; vb = vb || ''; }
+        if (va < vb) return orderCurrentSort.asc ? -1 : 1;
+        if (va > vb) return orderCurrentSort.asc ? 1 : -1;
+        return 0;
+      });
       renderOrderSortIcons();
-    }
-
-    function getStatusBadgeClass(status) {
-      switch (status) {
-        case 'Chờ xử lý': return 'bg-warning';
-        case 'Đã xác nhận': return 'bg-info';
-        case 'Đang giao hàng': return 'bg-primary';
-        case 'Đã giao hàng': return 'bg-success';
-        case 'Đã hủy': return 'bg-danger';
-        default: return 'bg-secondary';
-      }
-    }
-
-    function getStatusClass(status) {
-      switch (status) {
-        case 'Chờ xử lý': return 'status-pending';
-        case 'Đã xác nhận': return 'status-confirmed';
-        case 'Đang giao hàng': return 'status-shipping';
-        case 'Đã giao hàng': return 'status-delivered';
-        case 'Đã hủy': return 'status-cancelled';
-        default: return '';
-      }
-    }
+      renderOrders();
+    };
 
     function renderOrderSortIcons() {
-      ['id', 'date', 'customerName', 'customerPhone', 'total', 'status'].forEach(k => {
+      ['id', 'date', 'customerName', 'customerPhone', 'customerAddress', 'total', 'status'].forEach(k => {
         document.getElementById('sortOrderIcon-' + k).innerText = (orderCurrentSort.key === k) ? (orderCurrentSort.asc ? '▲' : '▼') : '';
       });
     }
 
     function renderOrderPagination() {
-      const totalPages = Math.ceil(orders.length / orderPageSize);
+      const totalPages = Math.ceil(filteredOrders.length / orderPageSize);
       const pag = document.getElementById('orderPagination');
       pag.innerHTML = '';
       if (totalPages <= 1) return;
@@ -2495,401 +2375,145 @@
       }
     }
 
-    window.sortOrderTable = function (key) {
-      if (orderCurrentSort.key === key) orderCurrentSort.asc = !orderCurrentSort.asc;
-      else { orderCurrentSort.key = key; orderCurrentSort.asc = true; }
-      orders.sort((a, b) => {
-        let va = a[key], vb = b[key];
-        if (key === 'total') { va = Number(va); vb = Number(vb); }
-        if (va < vb) return orderCurrentSort.asc ? -1 : 1;
-        if (va > vb) return orderCurrentSort.asc ? 1 : -1;
-        return 0;
+    function renderOrders() {
+      const tbody = ordersTableBody;
+      tbody.innerHTML = '';
+      let data = filteredOrders;
+      const start = (orderCurrentPage - 1) * orderPageSize;
+      const end = start + orderPageSize;
+      data = data.slice(start, end);
+      data.forEach((order, idx) => {
+        const tr = document.createElement('tr');
+        const statusClass = getStatusClass(order.status || 'Chờ xử lý');
+        tr.innerHTML = `
+          <td><strong>${order.id || 'N/A'}</strong></td>
+          <td>${order.date || 'N/A'}</td>
+          <td>${order.customerName || 'N/A'}</td>
+          <td>${order.customerPhone || 'N/A'}</td>
+          <td>${order.customerAddress || 'N/A'}</td>
+          <td><strong>${formatVND(order.total || 0)}</strong></td>
+          <td><span class="badge ${statusClass}">${order.status || 'Chờ xử lý'}</span></td>
+          <td>
+            <button class="admin-btn btn-sm" onclick="viewOrderDetail(${orders.findIndex(x => x.id === order.id)})" title="Xem chi tiết">
+              <i class="fas fa-eye"></i>
+            </button>
+            <button class="admin-btn btn-warning btn-sm" onclick="updateOrderStatus(${orders.findIndex(x => x.id === order.id)})" title="Cập nhật trạng thái">
+              <i class="fas fa-edit"></i>
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
       });
-      orderCurrentPage = 1;
-      renderOrders();
-      renderOrderPagination();
-    };
-
-    document.getElementById('searchOrderInput').addEventListener('input', function () {
-      const q = this.value.trim().toLowerCase();
-      orders = allOrders.filter(o =>
-        o.id.toLowerCase().includes(q) ||
-        o.customerName.toLowerCase().includes(q) ||
-        o.customerPhone.includes(q)
-      );
-      orderCurrentPage = 1;
-      renderOrders();
-      renderOrderPagination();
       renderOrderCount();
-    });
+      renderOrderSortIcons();
+    }
 
-    document.getElementById('btnAddOrder').onclick = function () {
-      document.getElementById('orderForm').reset();
-      document.getElementById('orderRowIndex').value = '';
-      document.getElementById('orderId').value = '';
-      document.getElementById('orderIdGroup').style.display = 'none';
-      document.getElementById('orderModalLabel').innerText = 'Thêm đơn hàng';
-      // Tạo mã đơn hàng mới
-      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-      let orderId = 'MTS';
-      for (let i = 0; i < 6; i++) {
-        orderId += chars.charAt(Math.floor(Math.random() * chars.length));
+    function getStatusClass(status) {
+      switch(status) {
+        case 'Đã xử lý': return 'bg-success';
+        case 'Đang xử lý': return 'bg-warning';
+        case 'Đã hủy': return 'bg-danger';
+        default: return 'bg-secondary';
       }
-      document.getElementById('orderId').value = orderId;
-    };
+    }
 
-    window.editOrder = function (idx) {
-      const o = orders[idx];
-      document.getElementById('orderId').value = o.id;
-      document.getElementById('orderCustomerName').value = o.customerName;
-      document.getElementById('orderCustomerPhone').value = o.customerPhone;
-      document.getElementById('orderCustomerEmail').value = o.customerEmail || '';
-      document.getElementById('orderCustomerAddress').value = o.customerAddress;
-      document.getElementById('orderCustomerProvince').value = o.customerProvince;
-      document.getElementById('orderCustomerDistrict').value = o.customerDistrict;
-      document.getElementById('orderCustomerWard').value = o.customerWard;
-      document.getElementById('orderTotal').value = o.total;
-      // Format items for display in textarea
-      let itemsText = '';
-      if (o.items) {
-        try {
-          if (typeof o.items === 'string') {
-            if (o.items.startsWith('[') || o.items.startsWith('{')) {
-              const parsed = JSON.parse(o.items);
-              if (Array.isArray(parsed)) {
-                itemsText = parsed.map(item =>
-                  `${item.productName || 'Sản phẩm'} (x${item.quantity || 1}) - ${formatVND(item.price || 0)}`
-                ).join('\n');
-              } else {
-                itemsText = o.items;
-              }
-            } else {
-              itemsText = o.items;
-            }
-          } else if (Array.isArray(o.items)) {
-            itemsText = o.items.map(item =>
-              `${item.productName || 'Sản phẩm'} (x${item.quantity || 1}) - ${formatVND(item.price || 0)}`
-            ).join('\n');
-          } else {
-            itemsText = o.items.toString();
-          }
-        } catch (e) {
-          itemsText = o.items.toString();
-        }
+    async function fetchOrders() {
+      showGlobalLoading(true);
+      try {
+        const res = await fetch(`${API_BASE}/api/orders`);
+        orders = await res.json();
+        filteredOrders = orders.slice();
+        orderCurrentPage = 1;
+        renderOrders();
+        renderOrderPagination();
+        renderOrderCount();
+      } catch (e) {
+        showToast('Không thể tải danh sách đơn hàng!', 'danger');
       }
-      document.getElementById('orderItems').value = itemsText;
-      document.getElementById('orderNote').value = o.note || '';
-      document.getElementById('orderStatus').value = o.status;
+      showGlobalLoading(false);
+    }
 
-      document.getElementById('orderIdGroup').style.display = 'block';
-      const realIndex = allOrders.findIndex(x => x.id === o.id);
-      document.getElementById('orderRowIndex').value = realIndex + 2;
-      document.getElementById('orderModalLabel').innerText = 'Sửa đơn hàng';
-      var modal = new bootstrap.Modal(document.getElementById('orderModal'));
+
+
+    window.viewOrderDetail = function(idx) {
+      const order = orders[idx];
+      if (!order) return;
+      
+      document.getElementById('orderDetailId').textContent = order.id || 'N/A';
+      document.getElementById('orderDetailDate').textContent = order.date || 'N/A';
+      document.getElementById('orderDetailName').textContent = order.customerName || 'N/A';
+      document.getElementById('orderDetailPhone').textContent = order.customerPhone || 'N/A';
+      document.getElementById('orderDetailEmail').textContent = order.customerEmail || 'N/A';
+      document.getElementById('orderDetailAddress').textContent = order.customerAddress || 'N/A';
+      document.getElementById('orderDetailProvince').textContent = order.customerProvince || 'N/A';
+      document.getElementById('orderDetailDistrict').textContent = order.customerDistrict || 'N/A';
+      document.getElementById('orderDetailWard').textContent = order.customerWard || 'N/A';
+      
+      // Hiển thị danh sách sản phẩm từ cột items
+      let itemsText = 'Không có sản phẩm';
+      if (order.items && order.items.length > 0) {
+        itemsText = order.items.map(item => 
+          `${item.productName || 'Sản phẩm'} (x${item.quantity || 1})`
+        ).join('\n');
+      } else if (order.items && typeof order.items === 'string' && order.items.trim() !== '') {
+        // Nếu items là string, hiển thị trực tiếp
+        itemsText = order.items;
+      }
+      document.getElementById('orderDetailItems').textContent = itemsText;
+      
+      document.getElementById('orderDetailTotal').textContent = formatVND(order.total || 0);
+      document.getElementById('orderDetailNote').textContent = order.note || 'Không có ghi chú';
+      document.getElementById('orderDetailStatus').textContent = order.status || 'Chờ xử lý';
+      document.getElementById('orderDetailStatus').className = `badge ${getStatusClass(order.status || 'Chờ xử lý')}`;
+      
+      const modal = new bootstrap.Modal(document.getElementById('orderDetailModal'));
       modal.show();
     };
 
-    window.viewOrderDetail = function (idx) {
-      const o = orders[idx];
-      const detailHtml = `
-        <div class="modal-header">
-          <h5 class="modal-title">Chi tiết đơn hàng ${o.id}</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <div class="row">
-            <div class="col-md-6">
-              <h6>Thông tin khách hàng</h6>
-              <p><strong>Tên:</strong> ${o.customerName}</p>
-              <p><strong>Số điện thoại:</strong> ${o.customerPhone}</p>
-              <p><strong>Email:</strong> ${o.customerEmail || 'Không có'}</p>
-              <p><strong>Địa chỉ:</strong> ${o.customerAddress}</p>
-              <p><strong>Tỉnh/Thành:</strong> ${o.customerProvince}</p>
-              <p><strong>Quận/Huyện:</strong> ${o.customerDistrict}</p>
-              <p><strong>Phường/Xã:</strong> ${o.customerWard}</p>
-            </div>
-            <div class="col-md-6">
-              <h6>Thông tin đơn hàng</h6>
-              <p><strong>Mã đơn hàng:</strong> ${o.id}</p>
-              <p><strong>Ngày đặt:</strong> ${o.date}</p>
-              <p><strong>Tổng tiền:</strong> ${formatVND(o.total)}</p>
-              <p><strong>Trạng thái:</strong> <span class="badge ${getStatusBadgeClass(o.status)}">${o.status}</span></p>
-              <p><strong>Sản phẩm:</strong></p>
-              <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin-bottom: 10px;">
-                ${formatOrderItems(o.items)}
-              </div>
-              <p><strong>Ghi chú:</strong> ${o.note || 'Không có'}</p>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="admin-btn btn-sm" data-bs-dismiss="modal">Đóng</button>
-        </div>
-      `;
-
-      const modal = document.createElement('div');
-      modal.className = 'modal fade';
-      modal.innerHTML = `
-        <div class="modal-dialog modal-lg">
-          <div class="modal-content">
-            ${detailHtml}
-          </div>
-        </div>
-      `;
-      document.body.appendChild(modal);
-      const bsModal = new bootstrap.Modal(modal);
-      bsModal.show();
-      modal.addEventListener('hidden.bs.modal', () => {
-        document.body.removeChild(modal);
-      });
+    window.updateOrderStatus = function(idx) {
+      const order = orders[idx];
+      if (!order) return;
+      
+      document.getElementById('orderStatusId').textContent = order.id || 'N/A';
+      document.getElementById('orderStatusSelect').value = order.status || 'Chờ xử lý';
+      
+      const modal = new bootstrap.Modal(document.getElementById('orderStatusModal'));
+      modal.show();
     };
 
-    // Function to update order status from detail popup
-    window.updateOrderStatus = async function (orderId, newStatus) {
+    document.getElementById('btnRefreshOrders').onclick = fetchOrders;
+
+    document.getElementById('orderStatusForm').onsubmit = async function(e) {
+      e.preventDefault();
+      const orderId = document.getElementById('orderStatusId').textContent;
+      const newStatus = document.getElementById('orderStatusSelect').value;
+      
+      showGlobalLoading(true);
       try {
-        const order = orders.find(o => o.id === orderId);
-        if (!order) {
-          showToast('Không tìm thấy đơn hàng!', 'error');
+        const orderIndex = orders.findIndex(o => o.id === orderId);
+        if (orderIndex === -1) {
+          showToast('Không tìm thấy đơn hàng!', 'danger');
           return;
         }
-
-        const realIndex = allOrders.findIndex(x => x.id === orderId);
-        const rowIndex = realIndex + 2;
-
-        // Update order status
-        order.status = newStatus;
-
+        
+        const rowIndex = orderIndex + 2;
         await fetch(`${API_BASE}/api/orders/${rowIndex}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(order)
+          body: JSON.stringify({ status: newStatus })
         });
-
+        
         showToast('Cập nhật trạng thái thành công!');
-
-        // Update select element styling
-        updateOrderStatusStyling(orderId, newStatus);
-
-        // Refresh orders list
+        bootstrap.Modal.getInstance(document.getElementById('orderStatusModal')).hide();
         fetchOrders();
       } catch (e) {
-        showToast('Cập nhật trạng thái thất bại!', 'error');
-      }
-    };
-
-    // Function to update select element styling based on status
-    function updateOrderStatusStyling(orderId, status) {
-      const selectElement = document.querySelector(`select[onchange*="${orderId}"]`);
-      if (selectElement) {
-        // Remove all status classes
-        selectElement.classList.remove('status-pending', 'status-confirmed', 'status-shipping', 'status-delivered', 'status-cancelled');
-
-        // Add appropriate class based on status
-        switch (status) {
-          case 'Chờ xử lý':
-            selectElement.classList.add('status-pending');
-            break;
-          case 'Đã xác nhận':
-            selectElement.classList.add('status-confirmed');
-            break;
-          case 'Đang giao hàng':
-            selectElement.classList.add('status-shipping');
-            break;
-          case 'Đã giao hàng':
-            selectElement.classList.add('status-delivered');
-            break;
-          case 'Đã hủy':
-            selectElement.classList.add('status-cancelled');
-            break;
-        }
-      }
-    }
-
-    let orderDeleteIdx = null;
-    window.deleteOrder = function (idx) {
-      orderDeleteIdx = idx;
-      var modal = new bootstrap.Modal(document.getElementById('deleteOrderConfirmModal'));
-      modal.show();
-    };
-
-    document.getElementById('btnConfirmDeleteOrder').onclick = async function () {
-      if (orderDeleteIdx !== null) {
-        const o = orders[orderDeleteIdx];
-        const realIndex = allOrders.findIndex(x => x.id === o.id);
-        const rowIndex = realIndex + 2;
-        showGlobalLoading(true);
-        try {
-          await fetch(`${API_BASE}/api/orders/${rowIndex}`, { method: 'DELETE' });
-          showToast('Xoá đơn hàng thành công!', 'danger');
-          fetchOrders();
-        } catch (e) {
-          showToast('Xoá đơn hàng thất bại!', 'danger');
-        }
-        orderDeleteIdx = null;
-        var modal = bootstrap.Modal.getInstance(document.getElementById('deleteOrderConfirmModal'));
-        modal.hide();
-        showGlobalLoading(false);
-      }
-    };
-
-    function validateOrderForm() {
-      const customerName = document.getElementById('orderCustomerName').value.trim();
-      const customerPhone = document.getElementById('orderCustomerPhone').value.trim();
-      const customerAddress = document.getElementById('orderCustomerAddress').value.trim();
-      const customerProvince = document.getElementById('orderCustomerProvince').value.trim();
-      const customerDistrict = document.getElementById('orderCustomerDistrict').value.trim();
-      const customerWard = document.getElementById('orderCustomerWard').value.trim();
-      const total = document.getElementById('orderTotal').value.trim();
-      const items = document.getElementById('orderItems').value.trim();
-      const status = document.getElementById('orderStatus').value;
-
-      if (!customerName) {
-        showToast('Tên khách hàng không được để trống!', 'warning');
-        return false;
-      }
-      if (!customerPhone) {
-        showToast('Số điện thoại không được để trống!', 'warning');
-        return false;
-      }
-      if (!customerAddress) {
-        showToast('Địa chỉ không được để trống!', 'warning');
-        return false;
-      }
-      if (!customerProvince) {
-        showToast('Tỉnh/Thành phố không được để trống!', 'warning');
-        return false;
-      }
-      if (!customerDistrict) {
-        showToast('Quận/Huyện không được để trống!', 'warning');
-        return false;
-      }
-      if (!customerWard) {
-        showToast('Phường/Xã không được để trống!', 'warning');
-        return false;
-      }
-      if (!total) {
-        showToast('Tổng tiền không được để trống!', 'warning');
-        return false;
-      }
-      if (!items) {
-        showToast('Sản phẩm không được để trống!', 'warning');
-        return false;
-      }
-      return true;
-    }
-
-    document.getElementById('orderForm').onsubmit = async function (e) {
-      e.preventDefault();
-      if (!validateOrderForm()) return;
-      const btn = this.querySelector('button[type="submit"]');
-      btn.disabled = true;
-      showGlobalLoading(true);
-      const rowIndex = document.getElementById('orderRowIndex').value;
-      let order = {
-        id: document.getElementById('orderId').value,
-        date: document.getElementById('orderRowIndex').value ? orders[orderDeleteIdx].date : new Date().toLocaleString('vi-VN'),
-        customerName: document.getElementById('orderCustomerName').value,
-        customerPhone: document.getElementById('orderCustomerPhone').value,
-        customerEmail: document.getElementById('orderCustomerEmail').value,
-        customerAddress: document.getElementById('orderCustomerAddress').value,
-        customerProvince: document.getElementById('orderCustomerProvince').value,
-        customerDistrict: document.getElementById('orderCustomerDistrict').value,
-        customerWard: document.getElementById('orderCustomerWard').value,
-        items: document.getElementById('orderItems').value,
-        total: document.getElementById('orderTotal').value,
-        note: document.getElementById('orderNote').value,
-        status: document.getElementById('orderStatus').value
-      };
-      try {
-        if (rowIndex) {
-          await fetch(`${API_BASE}/api/orders/${rowIndex}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(order)
-          });
-          showToast('Cập nhật đơn hàng thành công!');
-        } else {
-          // Thêm mới - sử dụng API POST hiện tại
-          const orderRow = [
-            order.id,
-            order.date,
-            order.customerName,
-            order.customerPhone,
-            order.customerEmail,
-            order.customerAddress,
-            order.customerProvince,
-            order.customerDistrict,
-            order.customerWard,
-            order.items,
-            order.total,
-            order.note,
-            order.status
-          ];
-          await fetch(`${API_BASE}/api/orders`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(orderRow)
-          });
-          showToast('Thêm đơn hàng thành công!');
-        }
-        var modal = bootstrap.Modal.getInstance(document.getElementById('orderModal'));
-        modal.hide();
-        setTimeout(() => { btn.disabled = false; }, 500);
-        fetchOrders();
-      } catch (e) {
-        showToast('Có lỗi xảy ra, vui lòng thử lại!', 'danger');
-        btn.disabled = false;
+        showToast('Cập nhật trạng thái thất bại!', 'danger');
       }
       showGlobalLoading(false);
     };
 
     document.querySelector('a[data-tab="orders"]').addEventListener('click', fetchOrders);
-
-    // Blog image preview functionality
-    document.getElementById('blogImage').addEventListener('input', function () {
-      const imageUrl = this.value.trim();
-      const preview = document.getElementById('blogImagePreview');
-      const previewImg = preview.querySelector('img');
-
-      if (imageUrl && imageUrl.startsWith('http')) {
-        previewImg.src = imageUrl;
-        preview.style.display = 'block';
-      } else {
-        preview.style.display = 'none';
-      }
-    });
-
-    // Function to show image modal from blog form
-    window.showBlogImageModal = function (imageUrl) {
-      if (!imageUrl || !imageUrl.startsWith('http')) {
-        showToast('URL ảnh không hợp lệ!', 'warning');
-        return;
-      }
-
-      const modalImg = document.getElementById('modalImage');
-      const modalThumbnails = document.getElementById('modalThumbnails');
-
-      modalImg.src = imageUrl;
-      currentZoom = 1;
-      modalImg.style.transform = 'scale(1)';
-
-      // Ẩn thumbnails vì chỉ có 1 ảnh
-      modalThumbnails.style.display = 'none';
-
-      const modal = document.getElementById('imageModal');
-      modal.style.display = 'block';
-      modal.style.opacity = '0';
-      setTimeout(() => {
-        modal.style.opacity = '1';
-      }, 10);
-
-      // Ẩn blog modal tạm thời
-      const blogModalEl = document.getElementById('blogModal');
-      if (blogModalEl && blogModalEl.classList.contains('show')) {
-        bootstrap.Modal.getInstance(blogModalEl).hide();
-      }
-    };
-
+    
     fetchProducts();
     function showGlobalLoading(show = true) {
       document.getElementById('globalLoading').style.display = show ? 'flex' : 'none';

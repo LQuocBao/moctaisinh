@@ -139,7 +139,7 @@ class BlogManager {
       }" data-blog-author="${blog.author || "Mộc Tái Sinh"}" data-blog-date="${
         blog.date || ""
       }" data-blog-image="${blogImage}">
-            <img src="${blogImage}" alt="${blog.title}" class="img-fluid">
+            <img src="${blogImage}" alt="${blog.title}">
           </a>
           <div class="post-content-entry">
             <h3><a href="javascript:void(0)" data-blog-id="${
@@ -255,12 +255,11 @@ class BlogManager {
                 max-width: 800px;
                 width: 100%;
                 max-height: 90vh;
-                display: flex;
-                flex-direction: column;
+                overflow-y: auto;
                 box-shadow: 0 20px 60px rgba(0,0,0,0.3);
                 animation: modalSlideIn 0.3s ease-out;
             ">
-                <div style="position: relative; flex-shrink: 0;">
+                <div style="position: relative;">
                     <button onclick="blogManager.closeBlogDetail()" style="
                         position: absolute;
                         top: 16px;
@@ -281,7 +280,7 @@ class BlogManager {
                     <div style="border-radius: 16px 16px 0 0; overflow: hidden;">
                         <img src="${image}" alt="${this.escapeHtml(
       title
-    )}" style="width: 100%; height: 300px; object-fit: cover;">
+    )}" style="width: 100%; height: 350px; object-fit: cover;">
                     </div>
                     
                     <div style="padding: 32px; padding-bottom: 16px;">
@@ -303,8 +302,6 @@ class BlogManager {
                 </div>
                 
                 <div style="
-                    flex: 1;
-                    overflow-y: auto;
                     padding: 0 32px 32px 32px;
                     border-top: 1px solid #eee;
                 ">
@@ -312,20 +309,26 @@ class BlogManager {
                         ${content.replace(/\n/g, "<br>")}
                     </div>
                     
-                    <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid #eee;">
-                        <button onclick="blogManager.closeBlogDetail()" style="
-                            padding: 12px 24px;
-                            border: 2px solid #3b5d50;
-                            background: white;
-                            color: #3b5d50;
-                            border-radius: 8px;
-                            font-size: 16px;
-                            font-weight: 600;
-                            cursor: pointer;
-                            transition: all 0.2s;
-                        " onmouseover="this.style.background='#3b5d50'; this.style.color='white'" onmouseout="this.style.background='white'; this.style.color='#3b5d50'">
-                            Đóng
-                        </button>
+                    <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid #eee; text-align: center;">
+                        <div style="margin-bottom: 12px;">
+                            <a href="shop.html" style="
+                                display: inline-block;
+                                padding: 8px 16px;
+                                background: #3b5d50;
+                                color: white;
+                                text-decoration: none;
+                                border-radius: 6px;
+                                font-size: 14px;
+                                font-weight: 500;
+                                transition: all 0.2s;
+                            " onmouseover="this.style.background='#2d4a3f'" onmouseout="this.style.background='#3b5d50'">
+                                <i class="fas fa-shopping-bag" style="margin-right: 6px;"></i>
+                                Khám phá sản phẩm
+                            </a>
+                        </div>
+                        <div style="color: #666; font-size: 12px;">
+                            © 2025 <a href="index.html" style="color: #3b5d50; text-decoration: none; font-weight: 500;">moctaisinh.vn</a> - Hành trình mộc tái sinh
+                        </div>
                     </div>
                 </div>
             </div>
