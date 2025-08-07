@@ -175,7 +175,7 @@ a.more {
 
 .hero p {
   color: rgba(255, 255, 255, 0.5);
-  margin-botom: 30px;
+  margin-bottom: 30px;
 }
 
 .hero .hero-img-wrap {
@@ -320,6 +320,9 @@ a.more {
   -webkit-transition: .3s all ease;
   -o-transition: .3s all ease;
   transition: .3s all ease;
+  width: 308px;
+  height: 280px;
+  border-radius: 10px;
 }
 
 .product-section .product-item h3 {
@@ -728,6 +731,9 @@ a.more {
 }
 
 .blog-section .post-entry .post-thumbnail img {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
   border-radius: 20px;
   -webkit-transition: .3s all ease;
   -o-transition: .3s all ease;
@@ -1259,5 +1265,16 @@ textarea {
     min-width: 0;
     padding: 16px 8px !important;
     box-sizing: border-box;
+  }
+}
+
+/* Ẩn icon lá thư trên mobile và tablet */
+@media (max-width: 991.98px) {
+  .footer-section .subscription-form h3 .me-2 {
+    display: none !important;
+  }
+
+  .footer-section .subscription-form h3 {
+    justify-content: center !important;
   }
 }
