@@ -1036,7 +1036,7 @@
 				productCol.className = 'col-4 col-md-4 col-lg-4 mb-5 mb-md-0';
 				const formattedPrice = product.price ? Number(product.price).toLocaleString('vi-VN') + '₫' : '';
 				productCol.innerHTML = `
-				<div class="product-item" data-product-id="${product.id}" onclick="goToProductDetail('${product.id}', '${product.name}', '${product.price}', '${product.description}', '${product.image}')">
+				<div class="product-item" data-product-id="${product.id}" onclick="goToProductDetail('${product.id}')">
 					<img src="${product.image || 'images/product-1.png'}" class="img-fluid product-thumbnail" alt="${product.name}">
 					<h3 class="product-title">${product.name}</h3>
 					<div class="product-desc-hover">${product.description || 'Sản phẩm thủ công độc đáo'}</div>
@@ -1060,15 +1060,26 @@
 		`;
 		}
 	}
-	function goToProductDetail(id, name, price, description, image) {
-		const productData = {
-			id: id,
-			name: name,
-			price: price,
-			description: description,
-			image: image
-		};
-		sessionStorage.setItem('productDetail', JSON.stringify(productData));
+	async function goToProductDetail(id) {
+		try {
+			// Lấy dữ liệu sản phẩm đầy đủ từ API
+			const API_BASE = 'http://localhost:8080';
+			const response = await fetch(`${API_BASE}/api/products`);
+			const products = await response.json();
+			const product = products.find(p => p.id === id);
+
+			if (product) {
+				// Lưu dữ liệu đầy đủ vào sessionStorage
+				sessionStorage.setItem('productDetail', JSON.stringify(product));
+			} else {
+				// Fallback nếu không tìm thấy sản phẩm
+				console.warn('Không tìm thấy sản phẩm với ID:', id);
+			}
+		} catch (error) {
+			console.error('Lỗi khi lấy dữ liệu sản phẩm:', error);
+		}
+
+		// Chuyển đến trang chi tiết
 		window.location.href = `detail.html?id=${id}`;
 	}
 	document.addEventListener('DOMContentLoaded', function () {
